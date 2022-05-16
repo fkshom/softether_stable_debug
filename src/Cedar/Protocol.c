@@ -1,26 +1,26 @@
 // SoftEther VPN Source Code - Stable Edition Repository
 // Cedar Communication Module
-// 
+//
 // SoftEther VPN Server, Client and Bridge are free software under the Apache License, Version 2.0.
-// 
+//
 // Copyright (c) Daiyuu Nobori.
 // Copyright (c) SoftEther VPN Project, University of Tsukuba, Japan.
 // Copyright (c) SoftEther Corporation.
 // Copyright (c) all contributors on SoftEther VPN project in GitHub.
-// 
+//
 // All Rights Reserved.
-// 
+//
 // http://www.softether.org/
-// 
+//
 // This stable branch is officially managed by Daiyuu Nobori, the owner of SoftEther VPN Project.
 // Pull requests should be sent to the Developer Edition Master Repository on https://github.com/SoftEtherVPN/SoftEtherVPN
-// 
+//
 // License: The Apache License, Version 2.0
 // https://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 // DISCLAIMER
 // ==========
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -28,7 +28,7 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
-// 
+//
 // THIS SOFTWARE IS DEVELOPED IN JAPAN, AND DISTRIBUTED FROM JAPAN, UNDER
 // JAPANESE LAWS. YOU MUST AGREE IN ADVANCE TO USE, COPY, MODIFY, MERGE, PUBLISH,
 // DISTRIBUTE, SUBLICENSE, AND/OR SELL COPIES OF THIS SOFTWARE, THAT ANY
@@ -42,7 +42,7 @@
 // ALL DEFENSES OF LACK OF PERSONAL JURISDICTION AND FORUM NON CONVENIENS.
 // PROCESS MAY BE SERVED ON EITHER PARTY IN THE MANNER AUTHORIZED BY APPLICABLE
 // LAW OR COURT RULE.
-// 
+//
 // USE ONLY IN JAPAN. DO NOT USE THIS SOFTWARE IN ANOTHER COUNTRY UNLESS YOU HAVE
 // A CONFIRMATION THAT THIS SOFTWARE DOES NOT VIOLATE ANY CRIMINAL LAWS OR CIVIL
 // RIGHTS IN THAT PARTICULAR COUNTRY. USING THIS SOFTWARE IN OTHER COUNTRIES IS
@@ -60,41 +60,41 @@
 // LIABLE TO RECOVER OR COMPENSATE SUCH DAMAGES, CRIMINAL OR CIVIL
 // RESPONSIBILITIES. NOTE THAT THIS LINE IS NOT LICENSE RESTRICTION BUT JUST A
 // STATEMENT FOR WARNING AND DISCLAIMER.
-// 
+//
 // READ AND UNDERSTAND THE 'WARNING.TXT' FILE BEFORE USING THIS SOFTWARE.
 // SOME SOFTWARE PROGRAMS FROM THIRD PARTIES ARE INCLUDED ON THIS SOFTWARE WITH
 // LICENSE CONDITIONS WHICH ARE DESCRIBED ON THE 'THIRD_PARTY.TXT' FILE.
-// 
-// 
+//
+//
 // SOURCE CODE CONTRIBUTION
 // ------------------------
-// 
+//
 // Your contribution to SoftEther VPN Project is much appreciated.
 // Please send patches to us through GitHub.
 // Read the SoftEther VPN Patch Acceptance Policy in advance:
 // http://www.softether.org/5-download/src/9.patch
-// 
-// 
+//
+//
 // DEAR SECURITY EXPERTS
 // ---------------------
-// 
+//
 // If you find a bug or a security vulnerability please kindly inform us
 // about the problem immediately so that we can fix the security problem
 // to protect a lot of users around the world as soon as possible.
-// 
+//
 // Our e-mail address for security reports is:
 // softether-vpn-security [at] softether.org
-// 
+//
 // Please note that the above e-mail address is not a technical support
 // inquiry address. If you need technical assistance, please visit
 // http://www.softether.org/ and ask your question on the users forum.
-// 
+//
 // Thank you for your cooperation.
-// 
-// 
+//
+//
 // NO MEMORY OR RESOURCE LEAKS
 // ---------------------------
-// 
+//
 // The memory-leaks and resource-leaks verification under the stress
 // test has been passed before release this source code.
 
@@ -1965,6 +1965,7 @@ TOKEN_LIST *EnumHub(SESSION *s)
 // Server accepts a connection from client
 bool ServerAccept(CONNECTION *c)
 {
+	Debug("ServerAccept");
 	bool ret = false;
 	UINT err;
 	PACK *p;
@@ -2965,7 +2966,7 @@ bool ServerAccept(CONNECTION *c)
 					SOCK *s = c->FirstSock;
 					if (s != NULL && s->RemoteIP.addr[0] != 127)
 					{
-						if(StrCmpi(username, ADMINISTRATOR_USERNAME) == 0 || 
+						if(StrCmpi(username, ADMINISTRATOR_USERNAME) == 0 ||
 							GetHubAdminOption(hub, "deny_empty_password") != 0)
 						{
 							// When the password is empty, remote connection is not acceptable
@@ -3214,7 +3215,7 @@ bool ServerAccept(CONNECTION *c)
 			}
 
 			if (hub->Option->RequiredClientId != 0 &&
-				hub->Option->RequiredClientId != client_id && 
+				hub->Option->RequiredClientId != client_id &&
 				InStrEx(c->ClientStr, "client", false))
 			{
 				// Build number of the client is too small
@@ -3839,7 +3840,6 @@ bool ServerAccept(CONNECTION *c)
 			{
 				bool no_nat_t = false;
 
-
 				// Initialize the UDP acceleration function
 				s->UdpAccel = NewUdpAccel(c->Cedar, (c->FirstSock->IsRUDPSocket ? NULL : &c->FirstSock->LocalIP), false, c->FirstSock->IsRUDPSocket, no_nat_t);
 				if (s->UdpAccel == NULL)
@@ -3876,7 +3876,7 @@ bool ServerAccept(CONNECTION *c)
 					if (s->UdpAccel->Version >= 2)
 					{
 						AddProtocolDetailsStr(s->ProtocolDetails, sizeof(s->ProtocolDetails),
-							Aead_ChaCha20Poly1305_Ietf_IsOpenSSL() ? 
+							Aead_ChaCha20Poly1305_Ietf_IsOpenSSL() ?
 							"ChachaPoly_OpenSSL" : "ChachaPoly_Self");
 					}
 
@@ -4106,7 +4106,7 @@ bool ServerAccept(CONNECTION *c)
 				}
 			}
 			UniStrCat(tmp, tmpsize, msg);
-			
+
 			utf = CopyUniToUtf(tmp);
 
 			PackAddData(p, "Msg", utf, StrLen(utf));
@@ -4387,7 +4387,7 @@ bool ServerAccept(CONNECTION *c)
 					Debug("Restore: s->BulkRecvKey->Size = %u, s->BulkSendKey->Size = %u\n",
 						s->BulkRecvKeySize, s->BulkSendKeySize);
 					Debug("Restore:\n%s\n%s\n\n", tmp1, tmp2);
-				}			
+				}
 			}
 		}
 
@@ -5315,7 +5315,7 @@ bool ClientAdditionalConnect(CONNECTION *c, THREAD *t)
 				Debug("Restore: s->BulkRecvKey->Size = %u, s->BulkSendKey->Size = %u\n",
 					s->BulkRecvKey->Size, s->BulkSendKey->Size);
 				Debug("Restore:\n%s\n%s\n\n", tmp1, tmp2);
-			}			
+			}
 		}
 	}
 
@@ -6148,7 +6148,7 @@ REDIRECTED:
 						Debug("Backup: sess->BulkRecvKeySize = %u, sess->BulkSendKeySize = %u\n",
 							sess->BulkRecvKeySize, sess->BulkSendKeySize);
 						Debug("Backup:\n%s\n%s\n\n", tmp1, tmp2);
-					}			
+					}
 
 					AddProtocolDetailsKeyValueInt(sess->ProtocolDetails, sizeof(sess->ProtocolDetails),
 						"RUDP_Bulk_Ver",
@@ -6253,7 +6253,7 @@ REDIRECTED:
 								if (sess->UdpAccel->Version >= 2)
 								{
 									AddProtocolDetailsStr(sess->ProtocolDetails, sizeof(sess->ProtocolDetails),
-										Aead_ChaCha20Poly1305_Ietf_IsOpenSSL() ? 
+										Aead_ChaCha20Poly1305_Ietf_IsOpenSSL() ?
 										"ChachaPoly_OpenSSL" : "ChachaPoly_Self");
 								}
 
@@ -6568,7 +6568,7 @@ PACK *PackWelcome(SESSION *s)
 			Debug("Backup: s->BulkRecvKeySize = %u, s->BulkSendKeySize = %u\n",
 				s->BulkRecvKeySize, s->BulkSendKeySize);
 			Debug("Backup:\n%s\n%s\n\n", tmp1, tmp2);
-		}			
+		}
 	}
 
 	if (s->IsAzureSession)
@@ -7321,7 +7321,7 @@ bool ServerDownloadSignature(CONNECTION *c, char **error_detail_str)
 
 					{
 						BUF *b = NULL;
-						
+
 						if (disable_json_api == false)
 						{
 							b = ReadDump("|wwwroot\\index.html");
@@ -10091,11 +10091,3 @@ LABEL_CLEANUP:
 
 	return 0;
 }
-
-
-
-
-
-
-
-

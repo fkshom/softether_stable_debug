@@ -1,26 +1,26 @@
 // SoftEther VPN Source Code - Stable Edition Repository
 // Cedar Communication Module
-// 
+//
 // SoftEther VPN Server, Client and Bridge are free software under the Apache License, Version 2.0.
-// 
+//
 // Copyright (c) Daiyuu Nobori.
 // Copyright (c) SoftEther VPN Project, University of Tsukuba, Japan.
 // Copyright (c) SoftEther Corporation.
 // Copyright (c) all contributors on SoftEther VPN project in GitHub.
-// 
+//
 // All Rights Reserved.
-// 
+//
 // http://www.softether.org/
-// 
+//
 // This stable branch is officially managed by Daiyuu Nobori, the owner of SoftEther VPN Project.
 // Pull requests should be sent to the Developer Edition Master Repository on https://github.com/SoftEtherVPN/SoftEtherVPN
-// 
+//
 // License: The Apache License, Version 2.0
 // https://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 // DISCLAIMER
 // ==========
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -28,7 +28,7 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
-// 
+//
 // THIS SOFTWARE IS DEVELOPED IN JAPAN, AND DISTRIBUTED FROM JAPAN, UNDER
 // JAPANESE LAWS. YOU MUST AGREE IN ADVANCE TO USE, COPY, MODIFY, MERGE, PUBLISH,
 // DISTRIBUTE, SUBLICENSE, AND/OR SELL COPIES OF THIS SOFTWARE, THAT ANY
@@ -42,7 +42,7 @@
 // ALL DEFENSES OF LACK OF PERSONAL JURISDICTION AND FORUM NON CONVENIENS.
 // PROCESS MAY BE SERVED ON EITHER PARTY IN THE MANNER AUTHORIZED BY APPLICABLE
 // LAW OR COURT RULE.
-// 
+//
 // USE ONLY IN JAPAN. DO NOT USE THIS SOFTWARE IN ANOTHER COUNTRY UNLESS YOU HAVE
 // A CONFIRMATION THAT THIS SOFTWARE DOES NOT VIOLATE ANY CRIMINAL LAWS OR CIVIL
 // RIGHTS IN THAT PARTICULAR COUNTRY. USING THIS SOFTWARE IN OTHER COUNTRIES IS
@@ -60,41 +60,41 @@
 // LIABLE TO RECOVER OR COMPENSATE SUCH DAMAGES, CRIMINAL OR CIVIL
 // RESPONSIBILITIES. NOTE THAT THIS LINE IS NOT LICENSE RESTRICTION BUT JUST A
 // STATEMENT FOR WARNING AND DISCLAIMER.
-// 
+//
 // READ AND UNDERSTAND THE 'WARNING.TXT' FILE BEFORE USING THIS SOFTWARE.
 // SOME SOFTWARE PROGRAMS FROM THIRD PARTIES ARE INCLUDED ON THIS SOFTWARE WITH
 // LICENSE CONDITIONS WHICH ARE DESCRIBED ON THE 'THIRD_PARTY.TXT' FILE.
-// 
-// 
+//
+//
 // SOURCE CODE CONTRIBUTION
 // ------------------------
-// 
+//
 // Your contribution to SoftEther VPN Project is much appreciated.
 // Please send patches to us through GitHub.
 // Read the SoftEther VPN Patch Acceptance Policy in advance:
 // http://www.softether.org/5-download/src/9.patch
-// 
-// 
+//
+//
 // DEAR SECURITY EXPERTS
 // ---------------------
-// 
+//
 // If you find a bug or a security vulnerability please kindly inform us
 // about the problem immediately so that we can fix the security problem
 // to protect a lot of users around the world as soon as possible.
-// 
+//
 // Our e-mail address for security reports is:
 // softether-vpn-security [at] softether.org
-// 
+//
 // Please note that the above e-mail address is not a technical support
 // inquiry address. If you need technical assistance, please visit
 // http://www.softether.org/ and ask your question on the users forum.
-// 
+//
 // Thank you for your cooperation.
-// 
-// 
+//
+//
 // NO MEMORY OR RESOURCE LEAKS
 // ---------------------------
-// 
+//
 // The memory-leaks and resource-leaks verification under the stress
 // test has been passed before release this source code.
 
@@ -107,6 +107,7 @@
 // Polling process
 void UdpAccelPoll(UDP_ACCEL *a)
 {
+	Debug("UdpAccelPoll");
 	IP nat_t_ip;
 	UINT num_ignore_errors = 0;
 	UCHAR *tmp;
@@ -138,6 +139,7 @@ void UdpAccelPoll(UDP_ACCEL *a)
 	// Receive a new UDP packet
 	while (true)
 	{
+		WHERE;
 		IP src_ip;
 		UINT src_port;
 		UINT ret;
@@ -263,10 +265,12 @@ void UdpAccelPoll(UDP_ACCEL *a)
 	// Send a Keep-Alive packet
 	if (a->NextSendKeepAlive == 0 || (a->NextSendKeepAlive <= a->Now) || a->YourPortByNatTServerChanged)
 	{
+		WHERE;
 		a->YourPortByNatTServerChanged = false;
 
 		if (UdpAccelIsSendReady(a, false))
 		{
+			WHERE;
 			UINT rand_interval;
 
 			if (a->FastDetect == false)
@@ -289,18 +293,22 @@ void UdpAccelPoll(UDP_ACCEL *a)
 	// Send a NAT-T request packet (Only if the connection by UDP has not be established yet)
 	if (a->NoNatT == false)
 	{
+		WHERE;
 		// In the usual case
 		if (IsZeroIp(&nat_t_ip) == false)
 		{
+			WHERE;
 			if (UdpAccelIsSendReady(a, true) == false)
 			{
+				WHERE;
 				if (a->NextPerformNatTTick == 0 || (a->NextPerformNatTTick <= a->Now))
 				{
+					WHERE;
 					UINT rand_interval;
 					UCHAR c = 'B';
 
 					a->CommToNatT_NumFail++;
-					
+
 					rand_interval = UDP_NAT_T_INTERVAL_INITIAL * MIN(a->CommToNatT_NumFail, UDP_NAT_T_INTERVAL_FAIL_MAX);
 					//PACK *p = NewPack();
 					//BUF *b;
@@ -334,6 +342,7 @@ void UdpAccelPoll(UDP_ACCEL *a)
 	}
 	else
 	{
+		WHERE;
 		// NAT_T is disabled, but there is a reference host (such as VGC)
 		if (a->UseUdpIpQuery || a->UseSuperRelayQuery)
 		{
@@ -344,6 +353,7 @@ void UdpAccelPoll(UDP_ACCEL *a)
 // Send a packet block
 void UdpAccelSendBlock(UDP_ACCEL *a, BLOCK *b)
 {
+	Debug("UdpAccelSendBlock");
 	// Validate arguments
 	if (a == NULL || b == NULL)
 	{
@@ -421,6 +431,7 @@ UINT UdpAccelCalcMss(UDP_ACCEL *a)
 // Send
 void UdpAccelSend(UDP_ACCEL *a, UCHAR *data, UINT data_size, UCHAR flag, UINT max_size, bool high_priority)
 {
+	Debug("UdpAccelSend");
 	UCHAR tmp[UDP_ACCELERATION_TMP_BUF_SIZE];
 	UCHAR *buf;
 	UINT size;
@@ -608,10 +619,13 @@ void UdpAccelSend(UDP_ACCEL *a, UCHAR *data, UINT data_size, UCHAR flag, UINT ma
 
 	if (data_size == 0)
 	{
+		WHERE;
 		if (UdpAccelIsSendReady(a, true) == false)
 		{
+				WHERE;
 			if ((a->YourPortByNatTServer != 0) && (a->YourPort != a->YourPortByNatTServer))
 			{
+				WHERE;
 				r = SendTo(a->UdpSock, &a->YourIp, a->YourPortByNatTServer, tmp, size);
 				if (r == 0 && a->UdpSock->IgnoreSendErr == false)
 				{
@@ -624,10 +638,13 @@ void UdpAccelSend(UDP_ACCEL *a, UCHAR *data, UINT data_size, UCHAR flag, UINT ma
 
 	if (data_size == 0)
 	{
+		WHERE;
 		if (IsZeroIP(&a->YourIp2) == false && CmpIpAddr(&a->YourIp, &a->YourIp2) != 0)
 		{
+			WHERE;
 			if (UdpAccelIsSendReady(a, true) == false)
 			{
+				WHERE;
 				// When the KeepAlive, if the opponent may be behind a NAT,
 				// send the packet to the IP address of outside of the NAT
 				r = SendTo(a->UdpSock, &a->YourIp2, a->YourPort, tmp, size);
@@ -639,6 +656,7 @@ void UdpAccelSend(UDP_ACCEL *a, UCHAR *data, UINT data_size, UCHAR flag, UINT ma
 
 				if ((a->YourPortByNatTServer != 0) && (a->YourPort != a->YourPortByNatTServer))
 				{
+					WHERE;
 					r = SendTo(a->UdpSock, &a->YourIp2, a->YourPortByNatTServer, tmp, size);
 					if (r == 0 && a->UdpSock->IgnoreSendErr == false)
 					{
@@ -662,6 +680,7 @@ void UdpAccelSend(UDP_ACCEL *a, UCHAR *data, UINT data_size, UCHAR flag, UINT ma
 // Determine whether transmission is possible
 bool UdpAccelIsSendReady(UDP_ACCEL *a, bool check_keepalive)
 {
+	Debug("UdpAccelIsSendReady");
 	UINT64 timeout_value;
 	// Validate arguments
 	if (a == NULL)
@@ -671,16 +690,19 @@ bool UdpAccelIsSendReady(UDP_ACCEL *a, bool check_keepalive)
 
 	if (a->Inited == false)
 	{
+		WHERE;
 		return false;
 	}
 
 	if (a->YourPort == 0)
 	{
+		WHERE;
 		return false;
 	}
 
 	if (IsZeroIp(&a->YourIp))
 	{
+		WHERE;
 		return false;
 	}
 
@@ -688,18 +710,22 @@ bool UdpAccelIsSendReady(UDP_ACCEL *a, bool check_keepalive)
 
 	if (a->FastDetect)
 	{
+		WHERE;
 		timeout_value = UDP_ACCELERATION_KEEPALIVE_TIMEOUT_FAST;
 	}
 
 	if (check_keepalive)
 	{
+		WHERE;
 		if (a->LastRecvTick == 0 || ((a->LastRecvTick + timeout_value) < a->Now))
 		{
+			WHERE;
 			a->FirstStableReceiveTick = 0;
 			return false;
 		}
 		else
 		{
+			WHERE;
 			if ((a->FirstStableReceiveTick + (UINT64)UDP_ACCELERATION_REQUIRE_CONTINUOUS) <= a->Now)
 			{
 				return true;
@@ -717,6 +743,7 @@ bool UdpAccelIsSendReady(UDP_ACCEL *a, bool check_keepalive)
 // Process the received packet
 BLOCK *UdpAccelProcessRecvPacket(UDP_ACCEL *a, UCHAR *buf, UINT size, IP *src_ip, UINT src_port)
 {
+	Debug("UdpAccelProcessRecvPacket");
 	UCHAR key[UDP_ACCELERATION_PACKET_KEY_SIZE_V1];
 	UCHAR *iv;
 	CRYPT *c;
@@ -847,10 +874,12 @@ BLOCK *UdpAccelProcessRecvPacket(UDP_ACCEL *a, UCHAR *buf, UINT size, IP *src_ip
 	}
 	if (a->ReadRawFlagMode == false)
 	{
+		WHERE;
 		compress_flag = *((UCHAR *)buf);
 	}
 	else
 	{
+		WHERE;
 		raw_flag = *((UCHAR *)buf);
 	}
 
@@ -900,8 +929,10 @@ BLOCK *UdpAccelProcessRecvPacket(UDP_ACCEL *a, UCHAR *buf, UINT size, IP *src_ip
 
 	if (my_tick < a->LastRecvYourTick)
 	{
+		WHERE;
 		if ((a->LastRecvYourTick - my_tick) >= ((UINT64)UDP_ACCELERATION_WINDOW_SIZE_MSEC))
 		{
+			WHERE;
 			return NULL;
 		}
 	}
@@ -911,15 +942,18 @@ BLOCK *UdpAccelProcessRecvPacket(UDP_ACCEL *a, UCHAR *buf, UINT size, IP *src_ip
 
 	if (inner_size >= 1)
 	{
+		WHERE;
 		b = NewBlock(Clone(inner_data, inner_size), inner_size, a->ReadRawFlagMode == false ? (compress_flag ? -1 : 0) : 0);
 		if (a->ReadRawFlagMode)
 		{
+			WHERE;
 			b->RawFlagRetUdpAccel = raw_flag;
 		}
 	}
 
 	if (a->LastSetSrcIpAndPortTick < a->LastRecvYourTick)
 	{
+		WHERE;
 		a->LastSetSrcIpAndPortTick = a->LastRecvYourTick;
 
 		Copy(&a->YourIp, src_ip, sizeof(IP));
@@ -928,14 +962,17 @@ BLOCK *UdpAccelProcessRecvPacket(UDP_ACCEL *a, UCHAR *buf, UINT size, IP *src_ip
 
 	if (a->LastRecvMyTick != 0)
 	{
+		WHERE;
 		if ((a->LastRecvMyTick + (UINT64)(UDP_ACCELERATION_WINDOW_SIZE_MSEC)) >= a->Now)
 		{
+			WHERE;
 			a->LastRecvTick = a->Now;
 
 			a->IsReachedOnce = true;
 
 			if (a->FirstStableReceiveTick == 0)
 			{
+				WHERE;
 				a->FirstStableReceiveTick = a->Now;
 			}
 		}
@@ -990,15 +1027,18 @@ bool UdpAccelInitServer(UDP_ACCEL *a, UCHAR *client_key, IP *client_ip, UINT cli
 
 	if (IsIP6(client_ip) != a->IsIPv6)
 	{
+		WHERE;
 		return false;
 	}
 
 	if (a->Version == 2)
 	{
+		WHERE;
 		Copy(a->YourKey_V2, client_key, UDP_ACCELERATION_COMMON_KEY_SIZE_V2);
 	}
 	else
 	{
+		WHERE;
 		Copy(a->YourKey, client_key, UDP_ACCELERATION_COMMON_KEY_SIZE_V1);
 	}
 
@@ -1029,15 +1069,18 @@ bool UdpAccelInitClient(UDP_ACCEL *a, UCHAR *server_key, IP *server_ip, UINT ser
 
 	if (IsIP6(server_ip) != a->IsIPv6)
 	{
+		WHERE;
 		return false;
 	}
 
 	if (a->Version == 2)
 	{
+		WHERE;
 		Copy(a->YourKey_V2, server_key, UDP_ACCELERATION_COMMON_KEY_SIZE_V2);
 	}
 	else
 	{
+		WHERE;
 		Copy(a->YourKey, server_key, UDP_ACCELERATION_COMMON_KEY_SIZE_V1);
 	}
 
@@ -1058,6 +1101,7 @@ bool UdpAccelInitClient(UDP_ACCEL *a, UCHAR *server_key, IP *server_ip, UINT ser
 // Create a new UDP acceleration function
 UDP_ACCEL *NewUdpAccel(CEDAR *cedar, IP *ip, bool client_mode, bool random_port, bool no_nat_t)
 {
+	Debug("NewUdpAccel");
 	UDP_ACCEL *a;
 	SOCK *s;
 	UINT max_udp_size;
@@ -1070,25 +1114,31 @@ UDP_ACCEL *NewUdpAccel(CEDAR *cedar, IP *ip, bool client_mode, bool random_port,
 
 	if (client_mode || random_port)
 	{
+		WHERE;
 		// Use a appropriate vacant port number in the case of using random port or client mode
 		s = NewUDPEx3(0, ip);
 	}
 	else
 	{
+		WHERE;
 		// Specify in the range in the case of server mode
 		UINT i;
 		s = NULL;
 
 		LockList(cedar->UdpPortList);
 		{
+			WHERE;
 			for (i = UDP_SERVER_PORT_LOWER;i <= UDP_SERVER_PORT_HIGHER;i++)
 			{
+				WHERE;
 				if (IsIntInList(cedar->UdpPortList, i) == false)
 				{
+					WHERE;
 					s = NewUDPEx3(i, ip);
 
 					if (s != NULL)
 					{
+						WHERE;
 						is_in_cedar_port_list = true;
 						break;
 					}
@@ -1097,12 +1147,14 @@ UDP_ACCEL *NewUdpAccel(CEDAR *cedar, IP *ip, bool client_mode, bool random_port,
 
 			if (s == NULL)
 			{
+				WHERE;
 				// Leave the port selection to the OS because the available port is not found within the range
 				s = NewUDPEx3(0, ip);
 			}
 
 			if (s != NULL && is_in_cedar_port_list)
 			{
+				WHERE;
 				AddIntDistinct(cedar->UdpPortList, i);
 			}
 		}
@@ -1111,6 +1163,7 @@ UDP_ACCEL *NewUdpAccel(CEDAR *cedar, IP *ip, bool client_mode, bool random_port,
 
 	if (s == NULL)
 	{
+		WHERE;
 		return NULL;
 	}
 
@@ -1146,6 +1199,7 @@ UDP_ACCEL *NewUdpAccel(CEDAR *cedar, IP *ip, bool client_mode, bool random_port,
 
 	if (a->IsIPv6)
 	{
+		WHERE;
 		a->NoNatT = true;
 	}
 
@@ -1193,6 +1247,7 @@ UDP_ACCEL *NewUdpAccel(CEDAR *cedar, IP *ip, bool client_mode, bool random_port,
 
 	if (a->NoNatT == false)
 	{
+		WHERE;
 		a->NatT_GetIpThread = NewThread(NatT_GetIpThread, a);
 	}
 
@@ -1202,6 +1257,7 @@ UDP_ACCEL *NewUdpAccel(CEDAR *cedar, IP *ip, bool client_mode, bool random_port,
 // NAT-T server IP address acquisition thread
 void NatT_GetIpThread(THREAD *thread, void *param)
 {
+	Debug("NatT_GetIpThread");
 	UDP_ACCEL *a;
 	char hostname[MAX_SIZE];
 	static IP dummy_ip = {0};
@@ -1216,6 +1272,7 @@ void NatT_GetIpThread(THREAD *thread, void *param)
 
 	if (IsZeroIP(&dummy_ip))
 	{
+		WHERE;
 		SetIP(&dummy_ip, 11, Rand8(), Rand8(), Rand8());
 	}
 
@@ -1223,6 +1280,7 @@ void NatT_GetIpThread(THREAD *thread, void *param)
 
 	while (a->NatT_Halt == false)
 	{
+		WHERE;
 		IP ip;
 		UINT wait_time = UDP_NAT_T_GET_IP_INTERVAL;
 
@@ -1231,6 +1289,7 @@ void NatT_GetIpThread(THREAD *thread, void *param)
 
 		if (ret && (IsZeroIp(&ip) == false))
 		{
+			WHERE;
 			char tmp[128];
 
 			// Success to get
@@ -1260,6 +1319,7 @@ void NatT_GetIpThread(THREAD *thread, void *param)
 // Release the UDP acceleration function
 void FreeUdpAccel(UDP_ACCEL *a)
 {
+	Debug("FreeUdpAccel");
 	// Validate arguments
 	if (a == NULL)
 	{
@@ -1308,4 +1368,3 @@ void FreeUdpAccel(UDP_ACCEL *a)
 
 	Free(a);
 }
-
