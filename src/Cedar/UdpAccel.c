@@ -1314,6 +1314,7 @@ void NatT_GetIpThread(THREAD *thread, void *param)
 
 		Wait(a->NatT_HaltEvent, wait_time);
 	}
+	WHERE;
 }
 
 // Release the UDP acceleration function

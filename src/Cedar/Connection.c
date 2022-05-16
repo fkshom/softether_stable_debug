@@ -1,26 +1,26 @@
 // SoftEther VPN Source Code - Stable Edition Repository
 // Cedar Communication Module
-// 
+//
 // SoftEther VPN Server, Client and Bridge are free software under the Apache License, Version 2.0.
-// 
+//
 // Copyright (c) Daiyuu Nobori.
 // Copyright (c) SoftEther VPN Project, University of Tsukuba, Japan.
 // Copyright (c) SoftEther Corporation.
 // Copyright (c) all contributors on SoftEther VPN project in GitHub.
-// 
+//
 // All Rights Reserved.
-// 
+//
 // http://www.softether.org/
-// 
+//
 // This stable branch is officially managed by Daiyuu Nobori, the owner of SoftEther VPN Project.
 // Pull requests should be sent to the Developer Edition Master Repository on https://github.com/SoftEtherVPN/SoftEtherVPN
-// 
+//
 // License: The Apache License, Version 2.0
 // https://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 // DISCLAIMER
 // ==========
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -28,7 +28,7 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
-// 
+//
 // THIS SOFTWARE IS DEVELOPED IN JAPAN, AND DISTRIBUTED FROM JAPAN, UNDER
 // JAPANESE LAWS. YOU MUST AGREE IN ADVANCE TO USE, COPY, MODIFY, MERGE, PUBLISH,
 // DISTRIBUTE, SUBLICENSE, AND/OR SELL COPIES OF THIS SOFTWARE, THAT ANY
@@ -42,7 +42,7 @@
 // ALL DEFENSES OF LACK OF PERSONAL JURISDICTION AND FORUM NON CONVENIENS.
 // PROCESS MAY BE SERVED ON EITHER PARTY IN THE MANNER AUTHORIZED BY APPLICABLE
 // LAW OR COURT RULE.
-// 
+//
 // USE ONLY IN JAPAN. DO NOT USE THIS SOFTWARE IN ANOTHER COUNTRY UNLESS YOU HAVE
 // A CONFIRMATION THAT THIS SOFTWARE DOES NOT VIOLATE ANY CRIMINAL LAWS OR CIVIL
 // RIGHTS IN THAT PARTICULAR COUNTRY. USING THIS SOFTWARE IN OTHER COUNTRIES IS
@@ -60,41 +60,41 @@
 // LIABLE TO RECOVER OR COMPENSATE SUCH DAMAGES, CRIMINAL OR CIVIL
 // RESPONSIBILITIES. NOTE THAT THIS LINE IS NOT LICENSE RESTRICTION BUT JUST A
 // STATEMENT FOR WARNING AND DISCLAIMER.
-// 
+//
 // READ AND UNDERSTAND THE 'WARNING.TXT' FILE BEFORE USING THIS SOFTWARE.
 // SOME SOFTWARE PROGRAMS FROM THIRD PARTIES ARE INCLUDED ON THIS SOFTWARE WITH
 // LICENSE CONDITIONS WHICH ARE DESCRIBED ON THE 'THIRD_PARTY.TXT' FILE.
-// 
-// 
+//
+//
 // SOURCE CODE CONTRIBUTION
 // ------------------------
-// 
+//
 // Your contribution to SoftEther VPN Project is much appreciated.
 // Please send patches to us through GitHub.
 // Read the SoftEther VPN Patch Acceptance Policy in advance:
 // http://www.softether.org/5-download/src/9.patch
-// 
-// 
+//
+//
 // DEAR SECURITY EXPERTS
 // ---------------------
-// 
+//
 // If you find a bug or a security vulnerability please kindly inform us
 // about the problem immediately so that we can fix the security problem
 // to protect a lot of users around the world as soon as possible.
-// 
+//
 // Our e-mail address for security reports is:
 // softether-vpn-security [at] softether.org
-// 
+//
 // Please note that the above e-mail address is not a technical support
 // inquiry address. If you need technical assistance, please visit
 // http://www.softether.org/ and ask your question on the users forum.
-// 
+//
 // Thank you for your cooperation.
-// 
-// 
+//
+//
 // NO MEMORY OR RESOURCE LEAKS
 // ---------------------------
-// 
+//
 // The memory-leaks and resource-leaks verification under the stress
 // test has been passed before release this source code.
 
@@ -910,7 +910,7 @@ void InsertReveicedBlockToQueue(CONNECTION *c, BLOCK *block, bool no_lock)
 	}
 
 	s = c->Session;
-	
+
 	if (c->Protocol == CONNECTION_TCP)
 	{
 		s->TotalRecvSizeReal += block->SizeofData;
@@ -1627,6 +1627,7 @@ SEND_START:
 // Reception of the block
 void ConnectionReceive(CONNECTION *c, CANCEL *c1, CANCEL *c2)
 {
+	Debug("ConnectionReceive");
 	UINT i, num;
 	SOCKSET set;
 	SESSION *s;
@@ -1667,6 +1668,7 @@ void ConnectionReceive(CONNECTION *c, CANCEL *c1, CANCEL *c2)
 	// Protocol
 	if (c->Protocol == CONNECTION_TCP)
 	{
+		WHERE;
 		// TCP
 		TCP *tcp = c->Tcp;
 		UINT next_delay_packet_diff = 0;
@@ -1699,7 +1701,7 @@ void ConnectionReceive(CONNECTION *c, CANCEL *c1, CANCEL *c2)
 		if (s->HalfConnection && (s->ServerMode == false))
 		{
 			// Check the direction of the current TCP connections.
-			//  Disconnect one if the number of connections reaches 
+			//  Disconnect one if the number of connections reaches
 			// the limit and has only one direction
 			LockList(tcp->TcpSockList);
 			{
@@ -1772,18 +1774,22 @@ void ConnectionReceive(CONNECTION *c, CANCEL *c1, CANCEL *c2)
 
 		if (s->Flag1 != set.NumSocket)
 		{
+			WHERE;
 			Select(&set, (num_delayed == 0 ? time : 1), c1, c2);
 			s->Flag1 = set.NumSocket;
 		}
 		else
 		{
+			WHERE;
 			if (no_spinlock_for_delay || time >= 50 || num_delayed == false)
 			{
+				WHERE;
 				Select(&set, (num_delayed == 0 ? time : (time > 100 ? (time - 100) : 1)), c1, c2);
 				s->Flag1 = set.NumSocket;
 			}
 			else
 			{
+				WHERE;
 				YieldCpu();
 			}
 		}
@@ -1794,6 +1800,7 @@ void ConnectionReceive(CONNECTION *c, CANCEL *c1, CANCEL *c2)
 
 		if (s->UseUdpAcceleration && s->UdpAccel != NULL)
 		{
+			WHERE;
 			// Read the data received by the UDP If using the UDP acceleration mode
 			UdpAccelSetTick(s->UdpAccel, now);
 			UdpAccelPoll(s->UdpAccel);
@@ -2346,6 +2353,7 @@ DISCONNECT_THIS_TCP:
 	}
 	else if (c->Protocol == CONNECTION_UDP)
 	{
+		WHERE;
 		// UDP
 		UDP *udp = c->Udp;
 		SOCK *sock = NULL;

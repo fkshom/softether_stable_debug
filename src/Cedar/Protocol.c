@@ -4217,11 +4217,12 @@ bool ServerAccept(CONNECTION *c)
 
 		// Main routine of the session
 		Debug("SessionMain()\n");
+		WHERE;
 		s->NumLoginIncrementUserObject = loggedin_user_object;
 		s->NumLoginIncrementHubObject = s->Hub;
 		s->NumLoginIncrementTick = Tick64() + (UINT64)NUM_LOGIN_INCREMENT_INTERVAL;
 		SessionMain(s);
-
+		WHERE;
 
 		// Discard the user list cache
 		DeleteAllUserListCache(hub->UserList);
