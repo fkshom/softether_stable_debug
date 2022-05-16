@@ -1,25 +1,25 @@
 // SoftEther VPN Source Code - Stable Edition Repository
 // Mayaqua Kernel
-// 
+//
 // SoftEther VPN Server, Client and Bridge are free software under the Apache License, Version 2.0.
-// 
+//
 // Copyright (c) Daiyuu Nobori.
 // Copyright (c) SoftEther VPN Project, University of Tsukuba, Japan.
 // Copyright (c) SoftEther Corporation.
 // Copyright (c) all contributors on SoftEther VPN project in GitHub.
-// 
+//
 // All Rights Reserved.
-// 
+//
 // http://www.softether.org/
-// 
+//
 // Authors: Daiyuu Nobori
-// 
+//
 // License: The Apache License, Version 2.0
 // https://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 // DISCLAIMER
 // ==========
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -27,7 +27,7 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
-// 
+//
 // THIS SOFTWARE IS DEVELOPED IN JAPAN, AND DISTRIBUTED FROM JAPAN, UNDER
 // JAPANESE LAWS. YOU MUST AGREE IN ADVANCE TO USE, COPY, MODIFY, MERGE, PUBLISH,
 // DISTRIBUTE, SUBLICENSE, AND/OR SELL COPIES OF THIS SOFTWARE, THAT ANY
@@ -41,7 +41,7 @@
 // ALL DEFENSES OF LACK OF PERSONAL JURISDICTION AND FORUM NON CONVENIENS.
 // PROCESS MAY BE SERVED ON EITHER PARTY IN THE MANNER AUTHORIZED BY APPLICABLE
 // LAW OR COURT RULE.
-// 
+//
 // USE ONLY IN JAPAN. DO NOT USE THIS SOFTWARE IN ANOTHER COUNTRY UNLESS YOU HAVE
 // A CONFIRMATION THAT THIS SOFTWARE DOES NOT VIOLATE ANY CRIMINAL LAWS OR CIVIL
 // RIGHTS IN THAT PARTICULAR COUNTRY. USING THIS SOFTWARE IN OTHER COUNTRIES IS
@@ -59,41 +59,41 @@
 // LIABLE TO RECOVER OR COMPENSATE SUCH DAMAGES, CRIMINAL OR CIVIL
 // RESPONSIBILITIES. NOTE THAT THIS LINE IS NOT LICENSE RESTRICTION BUT JUST A
 // STATEMENT FOR WARNING AND DISCLAIMER.
-// 
+//
 // READ AND UNDERSTAND THE 'WARNING.TXT' FILE BEFORE USING THIS SOFTWARE.
 // SOME SOFTWARE PROGRAMS FROM THIRD PARTIES ARE INCLUDED ON THIS SOFTWARE WITH
 // LICENSE CONDITIONS WHICH ARE DESCRIBED ON THE 'THIRD_PARTY.TXT' FILE.
-// 
-// 
+//
+//
 // SOURCE CODE CONTRIBUTION
 // ------------------------
-// 
+//
 // Your contribution to SoftEther VPN Project is much appreciated.
 // Please send patches to us through GitHub.
 // Read the SoftEther VPN Patch Acceptance Policy in advance:
 // http://www.softether.org/5-download/src/9.patch
-// 
-// 
+//
+//
 // DEAR SECURITY EXPERTS
 // ---------------------
-// 
+//
 // If you find a bug or a security vulnerability please kindly inform us
 // about the problem immediately so that we can fix the security problem
 // to protect a lot of users around the world as soon as possible.
-// 
+//
 // Our e-mail address for security reports is:
 // softether-vpn-security [at] softether.org
-// 
+//
 // Please note that the above e-mail address is not a technical support
 // inquiry address. If you need technical assistance, please visit
 // http://www.softether.org/ and ask your question on the users forum.
-// 
+//
 // Thank you for your cooperation.
-// 
-// 
+//
+//
 // NO MEMORY OR RESOURCE LEAKS
 // ---------------------------
-// 
+//
 // The memory-leaks and resource-leaks verification under the stress
 // test has been passed before release this source code.
 
@@ -181,7 +181,7 @@ int local_scandir(const char *dir, struct dirent ***namelist,
   if (i == 0) return(-1);
   if (compar != NULL)
     qsort((void *)(*namelist), (size_t)i, sizeof(struct dirent *), compar);
-    
+
   return(i);
 }
 
@@ -309,7 +309,7 @@ OS_DISPATCH_TABLE *UnixGetDispatchTable()
 	return &t;
 }
 
-static void *signal_received_for_ignore(int sig, siginfo_t *info, void *ucontext) 
+static void *signal_received_for_ignore(int sig, siginfo_t *info, void *ucontext)
 {
 	return NULL;
 }
@@ -2876,7 +2876,7 @@ void UnixServiceMain(int argc, char *argv[], char *name, SERVICE_FUNCTION *start
 {
 	UINT mode = 0;
 	// Start of the Mayaqua
-	InitMayaqua(false, false, argc, argv);
+	InitMayaqua(false, true, argc, argv);
 
 	if (argc >= 2)
 	{
