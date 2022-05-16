@@ -1,0 +1,4 @@
+Makefile
+/bin
+/tmp
+src/bin/BuiltHamcoreFiles/unix/hamcore.se2
